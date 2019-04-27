@@ -1,8 +1,12 @@
-# GradientInduction
-Implementaion of Neural Logic Reinforcement learning and several benchmarks.
+# Neural Logic Reinforcement Learing
+Implementaion of [Neural Logic Reinforcement learning](https://arxiv.org/abs/1904.10729) and several benchmarks.
+Neural Logic Reinforcement Learning uses deep reinforcement leanring methods to train a differential indutive logic progamming architecture, obtaining explainable and generalizable policies. Paper accepted by ICML2019.
+
+
+## Enviornments
 Developed in python2.7, Linux enviornment.
 
-## Dependencies
+### Dependencies
 * numpy
 * tensorflow
 
