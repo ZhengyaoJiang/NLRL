@@ -2,7 +2,7 @@ from __future__ import print_function, division, absolute_import
 from core.clause import *
 from core.ilp import LanguageFrame
 import copy
-from random import choice
+from random import choice, random
 
 
 class SymbolicEnvironment(object):
@@ -139,6 +139,30 @@ class CliffWalking(SymbolicEnvironment):
         else:
             raise ValueError
         return CliffWalking(initial_state, width)
+
+
+class WindyCliffWalking(CliffWalking):
+    def next_step(self, action):
+        x = int(self._state[0])
+        y = int(self._state[1])
+        self.step+=1
+        reward, finished = self.get_reward()
+        self.acc_reward += reward
+
+        if isinstance(action, Atom):
+            action = action.predicate
+        if random() < 0.1:
+            action = DOWN
+        if action == UP and y<self.width-1:
+            self._state = (str(x), str(y+1))
+        elif action == DOWN and y>0:
+            self._state = (str(x), str(y-1))
+        elif action == LEFT and x>0:
+            self._state = (str(x-1), str(y))
+        elif action == RIGHT and x<self.width-1:
+            self._state = (str(x+1), str(y))
+        return reward, finished
+
 
 ON = Predicate("on", 2)
 TOP = Predicate("top", 1)

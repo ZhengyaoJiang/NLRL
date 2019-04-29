@@ -1,5 +1,4 @@
 from core.setup import *
-from core.hypertune import run
 from collections import OrderedDict
 import argparse
 import json
@@ -14,6 +13,8 @@ def generalized_test(task, name, algo):
         env = Stack
     elif task == "on":
         env = On
+    elif task == "windycliffwalking":
+        env = WindyCliffWalking
     else:
         raise ValueError()
     import tensorflow as tf
@@ -44,6 +45,13 @@ def start_Random(task, name, mode, variation=None):
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     if task == "cliffwalking":
         man, env = setup_cliffwalking(variation)
+        agent = RandomAgent(env.action_n)
+        discounting = 1.0
+        critic = None
+        learner = ReinforceLearner(agent, env, 0.1, critic=critic, discounting=discounting,
+                                   batched=True, steps=12000, name=name)
+    if task == "windycliffwalking":
+        man, env = setup_windycliffwalking(variation)
         agent = RandomAgent(env.action_n)
         discounting = 1.0
         critic = None
@@ -83,6 +91,17 @@ def start_DILP(task, name, mode, variation=None):
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     if task == "cliffwalking":
         man, env = setup_cliffwalking(variation)
+        agent = RLDILP(man, env, state_encoding="atoms")
+        discounting = 1.0
+        if variation:
+            critic = None
+        else:
+            critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector,
+                                  involve_steps=True)
+        learner = ReinforceLearner(agent, env, 0.05, critic=critic, discounting=discounting,
+                                   batched=True, steps=50000, name=name)
+    if task == "windycliffwalking":
+        man, env = setup_windycliffwalking(variation)
         agent = RLDILP(man, env, state_encoding="atoms")
         discounting = 1.0
         if variation:
@@ -135,13 +154,18 @@ def start_NN(task, name, mode, variation=None):
     if task == "cliffwalking":
         man, env = setup_cliffwalking(variation)
         agent = NeuralAgent([20,10], env.action_n, env.state_dim)
-        # critic = TableCritic(1.0)
-        #learner = PPOLearner(agent, env, critic=critic)
-
         if variation:
             critic = None
         else:
-            # critic = TableCritic(discounting=1.0, learning_rate=0.01, involve_steps=True)
+            critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector)
+        learner = ReinforceLearner(agent, env, 0.002, critic=critic,
+                                   steps=120000, name=name)
+    if task == "windycliffwalking":
+        man, env = setup_windycliffwalking(variation)
+        agent = NeuralAgent([20,10], env.action_n, env.state_dim)
+        if variation:
+            critic = None
+        else:
             critic = NeuralCritic([20], env.state_dim, 1.0, learning_rate=0.001, state2vector=env.state2vector)
         learner = ReinforceLearner(agent, env, 0.002, critic=critic,
                                    steps=120000, name=name)
