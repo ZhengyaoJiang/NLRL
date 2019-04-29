@@ -6,7 +6,6 @@ from core.rules import *
 from core.induction import *
 from core.rl import *
 from core.clause import str2atom,str2clause
-from core.NTP import NeuralProver, RLProver, SymbolicNeuralProver
 from core.symbolicEnvironment import *
 
 def setup_predecessor():

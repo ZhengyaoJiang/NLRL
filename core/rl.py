@@ -1,5 +1,4 @@
 from core.induction import *
-from core.NTP import *
 from copy import deepcopy
 from collections import namedtuple
 import pickle
