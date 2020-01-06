@@ -8,7 +8,7 @@ Developed in python2.7, Linux enviornment.
 
 ### Dependencies
 * numpy
-* tensorflow
+* tensorflow (1.11)
 
 ## User Guide
 * use main.py to run the experiments
